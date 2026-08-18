@@ -2,6 +2,7 @@ package ExpenseTracker.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ExpenseTracker.Exception.ResourceException;
 
 import java.util.List;
 
@@ -22,27 +23,27 @@ public class ExpenseServices {
 		return expenseRepository.findAll();
 	}
 	
-	public ExpenseModel getExpenseById(String id) {
-		return expenseRepository.findById(id).orElse(null);
+	public ExpenseModel getExpenseById(String id){
+		return expenseRepository.findById(id).orElseThrow(()->new ResourceException("Expense Not Found by id: "+id));
 	}
 	
-	public void deleteExpense(String id) {
-		 expenseRepository.deleteById(id);
+	public ExpenseModel deleteExpenseById(String id) {
+		ExpenseModel ex=expenseRepository.findById(id).orElseThrow(()->new ResourceException("Expense Not Found by id: "+id));
+		expenseRepository.deleteById(id);
+		return ex;
 	}
 	
-	public ExpenseModel updateExpense(ExpenseModel expenseModel,String id) {
-		ExpenseModel old=expenseRepository.findById(id).orElse(null);
-		if(old!=null) {
-			old.setTitle(expenseModel.getTitle());
-			old.setAmount(expenseModel.getAmount());
-			old.setCategory(expenseModel.getCategory());
-			old.setDescription(expenseModel.getDescription());
-			old.setDate(expenseModel.getDate());
-			old.setPaymentMethod(expenseModel.getPaymentMethod());
-			return expenseRepository.save(old);
-		}else {
-			return expenseRepository.save(expenseModel);
-		}
+	public ExpenseModel updateExpenseById(ExpenseModel expenseModel,String id) {
+		ExpenseModel old=expenseRepository.findById(id).orElseThrow(()->new ResourceException("Expense Not Found by id: "+id));
+		
+		old.setTitle(expenseModel.getTitle());
+		old.setAmount(expenseModel.getAmount());
+		old.setCategory(expenseModel.getCategory());
+		old.setDescription(expenseModel.getDescription());
+		old.setDate(expenseModel.getDate());
+		old.setPaymentMethod(expenseModel.getPaymentMethod());
+		return expenseRepository.save(old);
+		
 		
 	}
 	

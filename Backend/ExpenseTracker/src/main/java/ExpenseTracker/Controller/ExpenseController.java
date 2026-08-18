@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ExpenseTracker.Model.ExpenseModel;
 import ExpenseTracker.Services.ExpenseServices;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/Expense")
@@ -23,7 +24,7 @@ public class ExpenseController {
 	private ExpenseServices expenseServices;
 	
 	@PostMapping("/addExpense")
-	public ExpenseModel addExpense(@RequestBody ExpenseModel expenseModel){
+	public ExpenseModel addExpense(@Valid @RequestBody ExpenseModel expenseModel){
 		return expenseServices.addExpense(expenseModel);
 	}
 	
@@ -33,20 +34,19 @@ public class ExpenseController {
 	}
 	
 	@GetMapping("/getExpenseById/{id}")
-	public ExpenseModel getAllExpense(@PathVariable String id){
+	public ExpenseModel getExpenseById(@PathVariable String id){
 		return expenseServices.getExpenseById(id);
 	}
 	
 	@DeleteMapping("/deleteExpenseById/{id}")
-	public void deleteExpense(@PathVariable String id) {
-		 expenseServices.deleteExpense(id);
+	public ExpenseModel deleteExpenseById(@PathVariable String id) {
+		 return expenseServices.deleteExpenseById(id);
 	}
 	
 	@PutMapping("/updateExpenseById/{id}")
-	public ExpenseModel updateExpense(@RequestBody ExpenseModel expenseModel, @PathVariable String id) {
-		return expenseServices.updateExpense(expenseModel, id);
+	public ExpenseModel updateExpenseById(@Valid @RequestBody ExpenseModel expenseModel, @PathVariable String id) {
+		return expenseServices.updateExpenseById(expenseModel, id);
 	}
-	
 	
 
 }
