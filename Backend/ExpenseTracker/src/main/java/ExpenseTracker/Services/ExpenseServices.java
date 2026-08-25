@@ -2,7 +2,7 @@ package ExpenseTracker.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ExpenseTracker.Exception.ResourceException;
+import ExpenseTracker.Exception.NotFoundResourceException;
 
 import java.util.List;
 
@@ -24,17 +24,17 @@ public class ExpenseServices {
 	}
 	
 	public ExpenseModel getExpenseById(String id){
-		return expenseRepository.findById(id).orElseThrow(()->new ResourceException("Expense Not Found by id: "+id));
+		return expenseRepository.findById(id).orElseThrow(()->new NotFoundResourceException("Expense Not Found by id: "+id));
 	}
 	
 	public ExpenseModel deleteExpenseById(String id) {
-		ExpenseModel ex=expenseRepository.findById(id).orElseThrow(()->new ResourceException("Expense Not Found by id: "+id));
+		ExpenseModel ex=expenseRepository.findById(id).orElseThrow(()->new NotFoundResourceException("Expense Not Found by id: "+id));
 		expenseRepository.deleteById(id);
 		return ex;
 	}
 	
 	public ExpenseModel updateExpenseById(ExpenseModel expenseModel,String id) {
-		ExpenseModel old=expenseRepository.findById(id).orElseThrow(()->new ResourceException("Expense Not Found by id: "+id));
+		ExpenseModel old=expenseRepository.findById(id).orElseThrow(()->new NotFoundResourceException("Expense Not Found by id: "+id));
 		
 		old.setTitle(expenseModel.getTitle());
 		old.setAmount(expenseModel.getAmount());

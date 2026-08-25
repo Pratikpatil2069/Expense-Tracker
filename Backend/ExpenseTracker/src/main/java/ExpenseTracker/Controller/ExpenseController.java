@@ -1,5 +1,6 @@
 package ExpenseTracker.Controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ExpenseTracker.Model.ExpenseModel;
+import ExpenseTracker.Response.ApiResponse;
 import ExpenseTracker.Services.ExpenseServices;
 import jakarta.validation.Valid;
 
@@ -26,34 +28,54 @@ public class ExpenseController {
 	private ExpenseServices expenseServices;
 	
 	@PostMapping("/addExpense")
-	public ResponseEntity<ExpenseModel> addExpense(@Valid @RequestBody ExpenseModel expenseModel){
+	public ResponseEntity<ApiResponse<ExpenseModel>> addExpense(@Valid @RequestBody ExpenseModel expenseModel){
+		
 		ExpenseModel expense= expenseServices.addExpense(expenseModel);
-		return ResponseEntity.status(HttpStatus.CREATED).body(expense);
+		
+		ApiResponse<ExpenseModel>response=new ApiResponse<>(true,"Expense Successfully Creted",expense,LocalDateTime.now());
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 	
 	@GetMapping("/getAllExpense")
-	public ResponseEntity<List<ExpenseModel>> getAllExpense(){
+	public ResponseEntity<ApiResponse<List<ExpenseModel>>> getAllExpense(){
+		
 		List<ExpenseModel>list =expenseServices.getAllExpense();
-		return ResponseEntity.ok(list);
+		
+		ApiResponse<List<ExpenseModel>>response=new ApiResponse<>(true, "All Expense Fetched Successfully", list, LocalDateTime.now());
+		
+		return ResponseEntity.ok(response);
 	}
 	
 	@GetMapping("/getExpenseById/{id}")
-	public ResponseEntity<ExpenseModel> getExpenseById(@PathVariable String id){
+	public ResponseEntity<ApiResponse<ExpenseModel>> getExpenseById(@PathVariable String id){
+		
 		ExpenseModel expense= expenseServices.getExpenseById(id);
-		return ResponseEntity.ok(expense);
+		
+		ApiResponse<ExpenseModel>response=new ApiResponse<>(true,"Expense Fetched Successfully",expense,LocalDateTime.now());
+
+		return ResponseEntity.ok(response);
 	}
 	
 	@DeleteMapping("/deleteExpenseById/{id}")
-	public ResponseEntity<Void> deleteExpenseById(@PathVariable String id) {
+	public ResponseEntity<ApiResponse<Void>> deleteExpenseById(@PathVariable String id) {
+		
 		 expenseServices.deleteExpenseById(id);
-		 return ResponseEntity.noContent().build();
+		 
+		 ApiResponse<Void>response=new ApiResponse<>(true,"Expense Deleted Successfully ",null,LocalDateTime.now());
+
+		 return ResponseEntity.ok(response);
 		 
 	}
 	
 	@PutMapping("/updateExpenseById/{id}")
-	public ResponseEntity<ExpenseModel> updateExpenseById(@Valid @RequestBody ExpenseModel expenseModel, @PathVariable String id) {
+	public ResponseEntity<ApiResponse<ExpenseModel>> updateExpenseById(@Valid @RequestBody ExpenseModel expenseModel, @PathVariable String id) {
+		
 		ExpenseModel expense= expenseServices.updateExpenseById(expenseModel, id);
-		return ResponseEntity.ok(expense);
+		
+		ApiResponse<ExpenseModel>response=new ApiResponse<>(true,"Expense Updated Successfully ",expense,LocalDateTime.now());
+
+		return ResponseEntity.ok(response);
 	}
 	
 
