@@ -1,9 +1,14 @@
 package ExpenseTracker.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import ExpenseTracker.Exception.NotFoundResourceException;
 
+import org.springframework.stereotype.Service;
+
+import ExpenseTracker.Exception.NotFoundResourceException;
+import ExpenseTracker.ExpenseDTO.ExpenseRequest;
+import ExpenseTracker.ExpenseDTO.ExpenseResponse;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import ExpenseTracker.Model.ExpenseModel;
@@ -15,35 +20,109 @@ public class ExpenseServices {
 	@Autowired
 	private ExpenseRepository expenseRepository;
 	
-	public ExpenseModel addExpense(ExpenseModel expenseModel) {
-		return expenseRepository.save(expenseModel);
+	public ExpenseResponse addExpense(ExpenseRequest expenseRequest) {
+		
+		ExpenseModel expenseModel=new ExpenseModel();
+		
+		expenseModel.setTitle(expenseRequest.getTitle());
+		expenseModel.setPaymentMethod(expenseRequest.getPaymentMethod());
+		expenseModel.setDescription(expenseRequest.getDescription());
+		expenseModel.setDate(expenseRequest.getDate());
+		expenseModel.setCategory(expenseRequest.getCategory());
+		expenseModel.setAmount(expenseRequest.getAmount());
+		
+		ExpenseModel response= expenseRepository.save(expenseModel);
+		
+		ExpenseResponse expenseResponse=new ExpenseResponse();
+		
+		expenseResponse.setTitle(response.getTitle());
+		expenseResponse.setPaymentMethod(response.getPaymentMethod());
+		expenseResponse.setDescription(response.getDescription());
+		expenseResponse.setDate(response.getDate());
+		expenseResponse.setCategory(response.getCategory());
+		expenseResponse.setAmount(response.getAmount());
+		
+		return expenseResponse;
+		
+		
 	}
 	
-	public List<ExpenseModel> getAllExpense() {
-		return expenseRepository.findAll();
+	public List<ExpenseResponse> getAllExpense() {
+		
+		List<ExpenseModel> response= expenseRepository.findAll();
+		
+		List<ExpenseResponse>exr=new ArrayList<>();
+		
+		for(ExpenseModel expenseModel:response) {
+			
+			ExpenseResponse expenseResponse=new ExpenseResponse();
+			
+			expenseResponse.setTitle(expenseModel.getTitle());
+			expenseResponse.setPaymentMethod(expenseModel.getPaymentMethod());
+			expenseResponse.setDescription(expenseModel.getDescription());
+			expenseResponse.setDate(expenseModel.getDate());
+			expenseResponse.setCategory(expenseModel.getCategory());
+			expenseResponse.setAmount(expenseModel.getAmount());
+			
+			exr.add(expenseResponse);
+		}
+		return exr;
 	}
 	
-	public ExpenseModel getExpenseById(String id){
-		return expenseRepository.findById(id).orElseThrow(()->new NotFoundResourceException("Expense Not Found by id: "+id));
+	public ExpenseResponse getExpenseById(String id){
+		
+		
+		ExpenseModel response= expenseRepository.findById(id).orElseThrow(()->new NotFoundResourceException("Expense Not Found by id: "+id));
+		
+		ExpenseResponse expenseResponse=new ExpenseResponse();
+		
+		expenseResponse.setTitle(response.getTitle());
+		expenseResponse.setPaymentMethod(response.getPaymentMethod());
+		expenseResponse.setDescription(response.getDescription());
+		expenseResponse.setDate(response.getDate());
+		expenseResponse.setCategory(response.getCategory());
+		expenseResponse.setAmount(response.getAmount());
+		
+		return expenseResponse;
 	}
 	
-	public ExpenseModel deleteExpenseById(String id) {
-		ExpenseModel ex=expenseRepository.findById(id).orElseThrow(()->new NotFoundResourceException("Expense Not Found by id: "+id));
-		expenseRepository.deleteById(id);
-		return ex;
+	public void deleteExpenseById(String id) {
+		if(expenseRepository.existsById(id)) {
+			
+			expenseRepository.deleteById(id);
+			
+		}else {
+			
+			 throw new NotFoundResourceException("Expense Not Found with id: "+id);
+			 
+		}
+		
 	}
 	
-	public ExpenseModel updateExpenseById(ExpenseModel expenseModel,String id) {
+	public ExpenseResponse updateExpenseById(ExpenseRequest expenseRequest,String id) {
 		ExpenseModel old=expenseRepository.findById(id).orElseThrow(()->new NotFoundResourceException("Expense Not Found by id: "+id));
 		
-		old.setTitle(expenseModel.getTitle());
-		old.setAmount(expenseModel.getAmount());
-		old.setCategory(expenseModel.getCategory());
-		old.setDescription(expenseModel.getDescription());
-		old.setDate(expenseModel.getDate());
-		old.setPaymentMethod(expenseModel.getPaymentMethod());
-		return expenseRepository.save(old);
+		ExpenseModel expenseModel=new ExpenseModel();
 		
+		expenseModel.setTitle(expenseRequest.getTitle());
+		expenseModel.setPaymentMethod(expenseRequest.getPaymentMethod());
+		expenseModel.setDescription(expenseRequest.getDescription());
+		expenseModel.setDate(expenseRequest.getDate());
+		expenseModel.setCategory(expenseRequest.getCategory());
+		expenseModel.setAmount(expenseRequest.getAmount());
+
+		ExpenseModel response= expenseRepository.save(old);
+		
+		ExpenseResponse expenseResponse=new ExpenseResponse();
+
+		expenseResponse.setTitle(response.getTitle());
+		expenseResponse.setAmount(response.getAmount());
+		expenseResponse.setCategory(response.getCategory());
+		expenseResponse.setDescription(response.getDescription());
+		expenseResponse.setDate(response.getDate());
+		expenseResponse.setPaymentMethod(response.getPaymentMethod());
+		
+		return expenseResponse;
 		
 	}
 	

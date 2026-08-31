@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import ExpenseTracker.ExpenseDTO.ExpenseRequest;
+import ExpenseTracker.ExpenseDTO.ExpenseResponse;
 import ExpenseTracker.Model.ExpenseModel;
 import ExpenseTracker.Response.ApiResponse;
 import ExpenseTracker.Services.ExpenseServices;
@@ -28,31 +30,31 @@ public class ExpenseController {
 	private ExpenseServices expenseServices;
 	
 	@PostMapping("/addExpense")
-	public ResponseEntity<ApiResponse<ExpenseModel>> addExpense(@Valid @RequestBody ExpenseModel expenseModel){
+	public ResponseEntity<ApiResponse<ExpenseResponse>> addExpense(@Valid @RequestBody ExpenseRequest expenseRequest){
 		
-		ExpenseModel expense= expenseServices.addExpense(expenseModel);
+		ExpenseResponse expense= expenseServices.addExpense(expenseRequest);
 		
-		ApiResponse<ExpenseModel>response=new ApiResponse<>(true,"Expense Successfully Creted",expense,LocalDateTime.now());
+		ApiResponse<ExpenseResponse>response=new ApiResponse<>(true,"Expense Successfully Creted",expense,LocalDateTime.now());
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 	
 	@GetMapping("/getAllExpense")
-	public ResponseEntity<ApiResponse<List<ExpenseModel>>> getAllExpense(){
+	public ResponseEntity<ApiResponse<List<ExpenseResponse>>> getAllExpense(){
 		
-		List<ExpenseModel>list =expenseServices.getAllExpense();
+		List<ExpenseResponse>list =expenseServices.getAllExpense();
 		
-		ApiResponse<List<ExpenseModel>>response=new ApiResponse<>(true, "All Expense Fetched Successfully", list, LocalDateTime.now());
+		ApiResponse<List<ExpenseResponse>>response=new ApiResponse<>(true, "All Expense Fetched Successfully", list, LocalDateTime.now());
 		
 		return ResponseEntity.ok(response);
 	}
 	
 	@GetMapping("/getExpenseById/{id}")
-	public ResponseEntity<ApiResponse<ExpenseModel>> getExpenseById(@PathVariable String id){
+	public ResponseEntity<ApiResponse<ExpenseResponse>> getExpenseById(@PathVariable String id){
 		
-		ExpenseModel expense= expenseServices.getExpenseById(id);
+		ExpenseResponse expense= expenseServices.getExpenseById(id);
 		
-		ApiResponse<ExpenseModel>response=new ApiResponse<>(true,"Expense Fetched Successfully",expense,LocalDateTime.now());
+		ApiResponse<ExpenseResponse>response=new ApiResponse<>(true,"Expense Fetched Successfully",expense,LocalDateTime.now());
 
 		return ResponseEntity.ok(response);
 	}
@@ -69,11 +71,11 @@ public class ExpenseController {
 	}
 	
 	@PutMapping("/updateExpenseById/{id}")
-	public ResponseEntity<ApiResponse<ExpenseModel>> updateExpenseById(@Valid @RequestBody ExpenseModel expenseModel, @PathVariable String id) {
+	public ResponseEntity<ApiResponse<ExpenseResponse>> updateExpenseById(@Valid @RequestBody ExpenseRequest expenseRequest, @PathVariable String id) {
 		
-		ExpenseModel expense= expenseServices.updateExpenseById(expenseModel, id);
+		ExpenseResponse expense= expenseServices.updateExpenseById(expenseRequest, id);
 		
-		ApiResponse<ExpenseModel>response=new ApiResponse<>(true,"Expense Updated Successfully ",expense,LocalDateTime.now());
+		ApiResponse<ExpenseResponse>response=new ApiResponse<>(true,"Expense Updated Successfully ",expense,LocalDateTime.now());
 
 		return ResponseEntity.ok(response);
 	}
