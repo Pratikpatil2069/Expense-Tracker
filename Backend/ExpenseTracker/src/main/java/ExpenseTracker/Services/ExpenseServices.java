@@ -1,7 +1,7 @@
 package ExpenseTracker.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import ExpenseTracker.Exception.NotFoundResourceException;
@@ -47,9 +47,17 @@ public class ExpenseServices {
 		
 	}
 	
-	public List<ExpenseResponse> getAllExpense() {
+	public List<ExpenseResponse> getAllExpense(String name , Pageable pageable) {
 		
-		List<ExpenseModel> response= expenseRepository.findAll();
+		List<ExpenseModel> response;
+		if(name==null || name.isBlank()) {
+			
+			response= expenseRepository.findAll(pageable).getContent();
+		}else {
+			
+			response=expenseRepository.findByNameContainingIgnoreCase(name, pageable).getContent();
+		}
+		
 		
 		List<ExpenseResponse>exr=new ArrayList<>();
 		

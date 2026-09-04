@@ -1,9 +1,11 @@
 package ExpenseTracker.Controller;
 
 import java.time.LocalDateTime;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,23 +15,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ExpenseTracker.ExpenseDTO.ExpenseRequest;
 import ExpenseTracker.ExpenseDTO.ExpenseResponse;
-import ExpenseTracker.Model.ExpenseModel;
 import ExpenseTracker.Response.ApiResponse;
 import ExpenseTracker.Services.ExpenseServices;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/Expense")
+@RequestMapping("/Expenses")
 public class ExpenseController {
 	
 	@Autowired
 	private ExpenseServices expenseServices;
 	
-	@PostMapping("/addExpense")
+	@PostMapping
 	public ResponseEntity<ApiResponse<ExpenseResponse>> addExpense(@Valid @RequestBody ExpenseRequest expenseRequest){
 		
 		ExpenseResponse expense= expenseServices.addExpense(expenseRequest);
@@ -39,17 +41,17 @@ public class ExpenseController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 	
-	@GetMapping("/getAllExpense")
-	public ResponseEntity<ApiResponse<List<ExpenseResponse>>> getAllExpense(){
+	@GetMapping
+	public ResponseEntity<ApiResponse<List<ExpenseResponse>>> getAllExpense(@RequestParam(required=false) String name , Pageable pageable){
 		
-		List<ExpenseResponse>list =expenseServices.getAllExpense();
+		List<ExpenseResponse>list =expenseServices.getAllExpense(name,pageable);
 		
 		ApiResponse<List<ExpenseResponse>>response=new ApiResponse<>(true, "All Expense Fetched Successfully", list, LocalDateTime.now());
 		
 		return ResponseEntity.ok(response);
 	}
 	
-	@GetMapping("/getExpenseById/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<ApiResponse<ExpenseResponse>> getExpenseById(@PathVariable String id){
 		
 		ExpenseResponse expense= expenseServices.getExpenseById(id);
@@ -59,7 +61,7 @@ public class ExpenseController {
 		return ResponseEntity.ok(response);
 	}
 	
-	@DeleteMapping("/deleteExpenseById/{id}")
+	@DeleteMapping("/{id}")
 	public ResponseEntity<ApiResponse<Void>> deleteExpenseById(@PathVariable String id) {
 		
 		 expenseServices.deleteExpenseById(id);
@@ -70,7 +72,7 @@ public class ExpenseController {
 		 
 	}
 	
-	@PutMapping("/updateExpenseById/{id}")
+	@PutMapping("/{id}")
 	public ResponseEntity<ApiResponse<ExpenseResponse>> updateExpenseById(@Valid @RequestBody ExpenseRequest expenseRequest, @PathVariable String id) {
 		
 		ExpenseResponse expense= expenseServices.updateExpenseById(expenseRequest, id);
